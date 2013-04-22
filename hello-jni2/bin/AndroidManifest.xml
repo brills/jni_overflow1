@@ -4,6 +4,7 @@
       android:versionCode="1"
       android:versionName="1.0">
     <uses-sdk android:minSdkVersion="3" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <application android:label="@string/app_name"
                  android:debuggable="true">
         <activity android:name=".HelloJni2"
@@ -13,5 +14,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    </application>
+    
+    <service android:name=".CanaryCollectService" android:label="Canary Collect Service">
+    <intent-filter>
+        <action android:name="com.example.CanaryCollectService" />
+    </intent-filter>
+    </service>
+    
+    	<receiver
+    		android:name=".StartMyServiceAtBootReceiver"
+    		android:enabled="true"
+    		android:exported="true"
+    		android:label="StartMyServiceAtBootReceiver">
+    		<intent-filter>
+        		<action android:name="android.intent.action.BOOT_COMPLETED" />
+    		</intent-filter>
+		</receiver>
+	
+	 </application>
+   
 </manifest> 

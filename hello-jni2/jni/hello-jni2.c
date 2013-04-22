@@ -27,6 +27,15 @@
  */
 extern void *__stack_chk_guard;
 jstring
+Java_com_example_hellojni2_CanaryCollectService_getCanary( JNIEnv *env,
+		jobject this) {
+	char buf[32];
+	sprintf(buf, "0x%08x", __stack_chk_guard);
+    return (*env)->NewStringUTF(env, buf);
+	
+}
+
+jstring
 Java_com_example_hellojni2_HelloJni2_genPayload( JNIEnv* env,
                                                   jobject this, jbyteArray buffer )
 {
