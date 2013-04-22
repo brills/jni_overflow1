@@ -1,0 +1,25 @@
+\section{Effect and Possible Attacks}
+
+The sharing values and predictable canary vulnerability affects the following:
+\begin{enumerate}
+
+\item All Android applications using NDK: the simplest stack overflow attacks are made possible.
+
+\item Dalvik VM: any buffer overflow vulnerability in DVM can be exploited with only weak defense mechanism.
+
+\item Zygote: similar to 2), but Zygote runs as root and thus is more profitable to exploit.
+
+\end{enumerate}
+
+\paragraph*{Possible Attack 1 (side channel / canary collector)} 
+
+As all applications are sharing the stack canary and the base addresses and these values do not change until the next boot, a malicious application could read these values and use them to build payload to overflow other apps running on the device. We made an example of such an attack (CITE: our repo). The malicious application could also collect these values and send to a server. If any buffer overflow vulnerability is found on a popular application, the attacker could compromise many devices as there is no stack protecting mechanism.
+
+\paragraph*{Possible Attack 2: guessing canary} 
+
+Depending on the resolution of the hardware timer and the knowledge the attacker has,  guessing the input of function canary(boot\_time, extract\_times) may take less time than simply guessing the canary value.
+
+\paragraph*{Possible Attack 3: heap overflow}
+
+Heap overflow vulnerabilities are more dangerous because it can circumvent overwriting the canary. A possible heap overflow attack only need to guess 16 bits, including the base addresses of the stack and the heap.
+

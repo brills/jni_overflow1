@@ -1,0 +1,36 @@
+\section{Methodology}
+
+\subsection{Performance}
+
+To establish link between the poor performance and the PRNG, we need to find out which processes would read from the random devices.
+
+We investigate this issue by both statically searching references of /dev/urandom and /dev/random in the source code of Android framework and instrumenting the kernel to capture every read of these two devices and the process who reads it. As showed in the next section, the result is sufficient to show that there is no causal relationship between reading from random devices and the poor performance.
+
+\subsection{Security}
+
+As mentioned in the introduction to Linux PRNG, the /dev/random device, although blocking, outputs absolutely secure random numbers that even its internal state compromises, the attacker still cannot predict its output, while the /dev/urandom device, once there is enough entropy mixed in, and its internal state is not known to the attacker, is also secure. Hence we focus only on /dev/urandom.
+
+We want to know:
+
+\begin{enumerate}
+\item Whether /dev/urandom is ever properly seeded: not being properly seeded could result from the amount of entropy never crossing the threshold of 192 bit due to lack of entropy sources combined with the random seed not being properly saved and restored, or in the first boot.
+
+\item If /dev/urandom is eventually properly seeded, then does the entropy accumulates rapidly enough so that when any application that requires high quality random numbers is invoked, /dev/urandom is ready.
+
+\end{enumerate}
+
+To answer the above questions, we did the following:
+\begin{enumerate}
+\item Instrumented the kernel to capture every event that contributes entropy to the input pool as well as the amount of entropy before and after that event. We also captured the events that extract entropy from the input pool and the amount of entropy before and after them. The time of above events, as well as the time when the user can operate the device are recorded. With the above result, we collected the typical amount of contribution of the three event types.
+
+\item With the result of 1), we investigated what processes read from /dev/urandom before its pool getting its first entropy mix.
+
+\item After we found that virtually every process read from /dev/urandom in order to set up its stack canary, we manually read the related Linux Kernel and Android source to to figure out how and when the canaries are set. We also investigate the ASLR implementation on arm architecture by source code reading.
+
+\item After we identified the predictable canary value issue, and found that given the same initial state, there could be different canary values due to different scheduling realization, we did experiment to see how much entropy does the canary value actually have.
+
+\end{enumerate}
+
+
+
+

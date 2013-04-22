@@ -1,0 +1,10 @@
+\section{Related Work}
+
+
+Previous work was done to analysis the security of the Linux PRNG, especially the non-blocking pool, (CITE: linux PRNG revisited) from a cryptographic point of view. It showed that given the internal state not known to the attacker, predicting the output of the non-blocking pool is as hard as reversing the SHA-1 hash function, even if there is not any entropy mixed in. We base our work on this assumption and do not want to challenge it. 
+
+There was also work focusing on what could happen before /dev/urandom being properly seeded and its internal state being completely unpredictable and unknown to the attacker. [CITE: Ps and Qs] successfully caught such a vulnerability that on some embedded devices the ssh-keygen was invoked before /dev/urandom was ready, resulting in identical or factorable RSA private keys. Our goal is to identify a similar vulnerability, but on Android devices which are more complicated and not investigated. And our result and conclusion turns out to be different from that for embedded devices: we find that the user applications do not suffer from the low entropy issue while it is the anti-buffer overflow mechanisms, implemented in the kernel and other parts of Android framework that suffer from it.
+
+ALSR was proposed and researched in some work. [CITE: 32-bit ALSR useless] showed that on an 32-bit architecture ALSR could do little help. Our work confirms further this point: the ALSR implemented in Linux for the arm architecture provides only 8 bits of entropy for each mapped memory range and the base address could be leaked by a side channel.
+
+
