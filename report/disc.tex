@@ -1,4 +1,4 @@
-\section{Effect and Possible Attacks}
+\section{Effect and Possible Attacks and Defense}
 
 The sharing values and predictable canary vulnerability affects the following:
 \begin{enumerate}
@@ -11,6 +11,8 @@ The sharing values and predictable canary vulnerability affects the following:
 
 \end{enumerate}
 
+\subsection{Possible Attacks}
+
 \paragraph*{Possible Attack 1 (side channel / canary collector)} 
 
 As all applications are sharing the stack canary and the base addresses and these values do not change until the next boot, a malicious application could read these values and use them to build payload to overflow other apps running on the device. We made an example of such an attack (CITE: our repo). The malicious application could also collect these values and send to a server. If any buffer overflow vulnerability is found on a popular application, the attacker could compromise many devices as there is no stack protecting mechanism.
@@ -22,4 +24,16 @@ Depending on the resolution of the hardware timer and the knowledge the attacker
 \paragraph*{Possible Attack 3: heap overflow}
 
 Heap overflow vulnerabilities are more dangerous because it can circumvent overwriting the canary. A possible heap overflow attack only need to guess 16 bits, including the base addresses of the stack and the heap.
+
+\subsection{Defense}
+
+It is relatively easy to address the predictable canary issue by having Zygote write a new canary value after forking a new instance of Dalvik VM. This may bring an overhead of one page of memory due to modification on a CoW page.
+
+The weak ASLR protection is rather hard to fix because:
+\begin{itemize}
+\item The shared base addresses is due to fork implementation. The Android developers choose to only \verb|fork| instead of \verb|exec| after \verb|fork| to avoid repeatedly mapping same files in to the new process' address space, since all Android apps runs on Dalvik VM and thus need a same set of shared libraries. There seems to be no better way to achieve different address layouts for each forked applications without sacrificing the performance.
+
+\item The low entropy provided by ASLR is due to the 32-bit architecture. It is hard to provide enough entropy that is preventive for attackers to guess with brute force without great modification to the Linux Kernel It is hard to provide enough entropy that is preventive for attackers to guess with brute force without great modification to the Linux Kernel.
+
+\end{itemize}
 
