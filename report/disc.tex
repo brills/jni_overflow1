@@ -15,7 +15,7 @@ The sharing values and predictable canary vulnerability affects the following:
 
 \paragraph*{Possible Attack 1 (side channel / canary collector)} 
 
-As all applications are sharing the stack canary and the base addresses and these values do not change until the next boot, a malicious application could read these values and use them to build payload to overflow other apps running on the device. We made an example of such an attack (CITE: our repo). The malicious application could also collect these values and send to a server. If any buffer overflow vulnerability is found on a popular application, the attacker could compromise many devices as there is no stack protecting mechanism.
+As all applications are sharing the stack canary and the base addresses and these values do not change until the next boot, a malicious application could read these values and use them to build payload to overflow other apps running on the device. We made an example of such an attack \cite{jnioverflow}. The malicious application could also collect these values and send to a server. If any buffer overflow vulnerability is found on a popular application, the attacker could compromise many devices as there is no stack protecting mechanism.
 
 \paragraph*{Possible Attack 2: guessing canary} 
 

@@ -86,7 +86,7 @@ The stack protector works with the help of two components:
 
 However, the way in which the canary value is initialized could be problematic on Android platform. All system services and user applications running on the Dalvik VM are forked from a process called Zygote. By leveraging the Copy-on-Write fork on Linux, Android apps do not need to load the Dalvik VM execution image or the shared library repeatedly on start, leading to better performance. But it also means that there is no chance for an app to invoke the library constructor which setup the canary value. Therefore all Android processes share one stack canary.
 
-We made an app (CITE: our repository) to show its canary value on the screen and compared this value to what \verb|app_process| (which then forked Zygote) read from /dev/urandom on its start. The result verified this vulnerability. 
+We made an app \cite{jnioverflow} to show its canary value on the screen and compared this value to what \verb|app_process| (which then forked Zygote) read from /dev/urandom on its start. The result verified this vulnerability. 
 
 \subsubsection{Predictable Stack Canary}
 
@@ -116,9 +116,9 @@ If the attacker has prior knowledge of this distribution of the number of extrac
 
 %XXX Entropy estimation!!
 
-With the above model, we can estimate that $B$ and $N$ together will provide ? to ~ bits of entropy.
+With the above model, we can estimate that $B$ and $N$ together will provide 27 bits of entropy, assuming the attacker knows the boot time in second.
 
-Although the computation needed to predict the value of canary may be comparable to simply guessing the 32-bit canary, this vulnerability nullifies the additional security brought by extending the length of the canary.
+Although the computation needed to predict the value of canary may be comparable to simply guessing the 32-bit canary, this vulnerability nullifies the additional security brought by extending the length of the canary. Furthermore, the system time is not a secret number and can be leaked via various ways.
 
 \subsubsection{Nullified ASLR}
 
