@@ -99,8 +99,8 @@ We conjectured that it was due to multitasking and different scheduling realizat
 Given no entropy mixed into the pool of /dev/urandom, the internal state depends only on the number of extractions from the pool (this is different from the number of bytes read from /dev/urandom, because the minimum number of bytes to extract is 10). With the non-determinism of scheduling, we can model the canary value as a function $f(B,N)$ where $B$ is the boot time and $N$ is the number of extractions from /dev/urandom that happened before Zygote read from it.
 
 
-$B$ is acquired by \verb|getnstimeofday()| function which supports resolution of nanosecond, but we observed only *** precision on our devices. 
-$B$ may not confirm to a specific distribution and the attacker may have knowledge about it in various degree, we can only make some simple assumption, for example, we can assume that the attacker knows the boot time with precision of second.
+$B$ is acquired by \verb|getnstimeofday()| function which supports resolution of nanosecond, but we observed only microsecond precision on our devices.
+$B$ may not confirm to a specific distribution and the attacker may have knowledge about it in various degrees, we can only make some simple assumption, for example, we can assume that the attacker knows the boot time with precision of second, then the attacker has to guess the microsecond out of $10^6$ values, equivalent to 20 bits of entropy.
 
 $N$ may confirm to some distribution because it can be seen as a value affected by a set of independent events. In order to characterize its distribution, we collected its realization from 244 times of boot; the result is shown in figure \ref{fighist}.
 
@@ -112,7 +112,7 @@ $N$ may confirm to some distribution because it can be seen as a value affected 
 \label{fighist}
 \end{figure}
 
-If the attacker has prior knowledge of this distribution of the number of extractions before, he could guess the ranges in a higher probability first order, which gives an expected number of guess of 133 in our case, equivalent to 8 bits of entropy.
+If the attacker has prior knowledge of this distribution of the number of extractions before, he could guess the ranges in a higher probability first order, which gives an expected number of guess of 133 in our case, equivalent to about 7 bits of entropy.
 
 %XXX Entropy estimation!!
 
