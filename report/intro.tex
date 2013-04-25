@@ -1,14 +1,14 @@
 \section{Introduction}
 \subsection{Motivation}
 
-Our motivation roots in an issue reported to the Android Open Source Program \cite{issue42265} , which complained about the constantly low amount of entropy kept by the PRNG affected the overall performance and user experience, causing low frame rate in the UI layer. There was a solution proposed by the XDA community which periodically wrote into /dev/urandom. The idea behind the solution is that the lag is attributed to the blocking read of /dev/random; writing into /dev/urandom raises the amount of entropy and processes blocking on /dev/random then get unblocked. 
+Our motivation roots in an issue reported to the Android Open Source Program \cite{issue42265} , which complained about the constantly low amount of entropy kept by the PRNG affected the overall performance and user experience, causing low frame rate in the UI layer. There was a solution proposed by the XDA community which periodically wrote into \verb|/dev/urandom|. The idea behind the solution is that the lag is attributed to the blocking read of \verb|/dev/random|; writing into \verb|/dev/urandom| raises the amount of entropy and processes blocking on \verb|/dev/random| then get unblocked. 
 
 We first want to investigate whether this accusation is grounded and whether the solution does any help, since the solution, as described by some users, resolved the long-lived lagging UI issue of Android.
 
 Furthermore, this issue reminds us the identical or factorable RSA private keys issue prevalent among embedded devices which lack sources of entropy and have constantly low amount of entropy \cite{weakkeys12}. We want to know if there is a similar vulnerability on the Android devices, which could also lack entropy sources during boot, especially during their first boot: the applications which require high quality random numbers, such as a disk encryption application,  get predictable or identical results from the PRNG.
 
 \subsection{Linux PRNG and Our Assumption}
-Android runs on a Linux kernel. The /dev/random and /dev/urandom devices are backed by the Linux PRNG. Figure \ref{figprng} shows its general structure \cite{Gutterman06}. In this section, we briefly describe how it works and its properties related to our work.
+Android runs on a Linux kernel. The \verb|/dev/random| and \verb|/dev/urandom| devices are backed by the Linux PRNG. Figure \ref{figprng} shows its general structure \cite{Gutterman06}. In this section, we briefly describe how it works and its properties related to our work.
 
 \begin{figure}[t]
 \begin{center}
@@ -23,7 +23,7 @@ The Linux PRNG consists of three entropy pools which act in a same manner. They 
 
 The three pools are initialized when the kernel initializes the random character device. On initialization, the pools are not wiped and the time and machine information are mixed in. Under traditional Linux environment, there is an init script which read the saved random seed from the disk and mix it into the nonblocking pool.
 
-Our assumption on Linux ALSR is the following: after the first time when /dev/urandom extracts enough entropy (for example, the minimum amount of extraction every time, 60 bits) from the input pool, /dev/urandom is secure. It makes no difference that the amount of entropy is low or high after this time point. 
+Our assumption on Linux ALSR is the following: after the first time when \verb|/dev/urandom| extracts enough entropy (for example, the minimum amount of extraction every time, 60 bits) from the input pool, \verb|/dev/urandom| is secure. It makes no difference that the amount of entropy is low or high after this time point. 
 
 
 The rest of the paper is organized as follows. In section 2, we introduce existing work on analyzing Linux PRNG and the low entropy issue, as well as the work aiming at exploiting or defending buffer overflow. Section 3 describes our investigation methodology. Section 4 shows the result of our investigation, revailing several vulnerabilities. In Section 5 we discuss the effect of these vulnerabilities and possible attacks and defenses. Finally, in section 6 we describe the future work.
