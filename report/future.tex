@@ -1,3 +1,14 @@
+\section{Future Work}
+More work could be done to further reduce the cost of predicting the boot time and the canary value:
+
+\begin{itemize}
+\item Model the scheduling before Zygote starting as a stochastic process may yield a better way to order the guessing sequence and eliminate impossible values.
+\item Investigate if it is possible to acquire precise time of boot. $uptime$ could be a good start, but it only provides boot time in second.
+
+\end{itemize}
+
+Also, work should be done to analyze Android application using NDK of buffer overflow vulnerability. Most applications use NDK in their CPU intensive routines, resulting in a relatively narrow attack surface, however, these routines have to exchange data with the Java code, which is most possible for buffer overflow.
+
 \section{Conclusion}
 
 We have investigated the low entropy issue on Android and shown that the poor performance is not caused by blocking reads to \verb|/dev/random|, since there are almost none of them. Starting from this issue, we also have investigated possible security vulnerabilities and we have shown that the PRNGs on Android devices provide secure pseudorandom numbers for all user applications that requires them, because the entropy generated during boot is enough to seed the PRNG properly. However we have found that the stack protecting mechanism initializes the canary value shared by all future Android applications with a value read from the PRNG at an early time when the PRNG is not ready. We have shown that this vulnerability could result in less computation for guessing the canary value, depending on the knowledge of the attacker on the boot time. Furthermore, we have also shown that the shared values vulnerability could leak not only the canary value but the base addresses information, effectively nullifying the address space layout randomization mechanism on Android. We have discussed possible attacks against this vulnerability and implemented one of them. In the end, we have proposed a fix to the shared canary vulnerability and argued that the general shared values vulnerability is difficult to fix.
